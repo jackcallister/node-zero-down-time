@@ -1,0 +1,11 @@
+apps:
+  - script   : './src/index.js'
+    name     : 'app'
+    instances: 4
+    exec_mode: cluster
+    cwd      : '/Users/jackcallister/Programs/node-zero-down-time'
+    out_file : '/Users/jackcallister/Programs/node-zero-down-time/logs/app.log'
+    error_file : '/Users/jackcallister/Programs/node-zero-down-time/logs/app.log'
+    merge_logs: true
+    env:
+      NODE_ENV: development
