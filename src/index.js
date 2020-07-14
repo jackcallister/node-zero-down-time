@@ -1,20 +1,40 @@
+const ejs = require('ejs')
+const express = require('express')
+const http = require('http')
+const path = require('path')
+
+const Gpio = require('onoff').Gpio;
+
+const pin = new Gpio(17, 'out');
+
+const app = express()
+const port = 3000
+
 process.send = process.send || function () {}
 
-const http = require('http')
+const server = http.createServer(app)
 
-const app = function (req, res) {
-  res.writeHead(200);
-  res.end('Hello, World!!!');
+app.set('views', path.join(__dirname, './views'))
+app.set('view engine', 'ejs')
+
+app.use(express.static('public'))
+
+const index = (req, res) => {
+  res.render('index', { value: pin.readSync() })
 }
 
-const server = http.createServer(app);
+const toggle = (req, res) => {
+  const value = 1 - pin.readSync()
 
-process.on('SIGINT', () => {
-  server.close((err) => {
-    process.exit(err ? 1 : 0)
-  })
-})
+  pin.writeSync(value)
 
-server.listen(3000, function () {
+  res.send({ value: value })
+}
+
+app.get('/', index)
+
+app.get('/toggle', toggle)
+
+server.listen(port, function () {
   process.send('ready')
 })
